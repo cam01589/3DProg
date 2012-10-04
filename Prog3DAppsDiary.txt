@@ -23,12 +23,21 @@ PIX (used for error checking of directx calls )
 I have not yet looked into this.
 
 	Resources
+
 Added John D Carmack to my following list on twitter.
 Added Morgan McGuire to my following list on twitter.(Nvidia)
 
 I have found that Nasa has many free 3d models for download, these could come in handy in the future so I need to have a look.
 
 	Online
+
+Gamedev.net
+
+free online book
+Programming Vertex Geometry and Pixel Shaders
+content.gpwiki.org/index.php/D3DBook:Book_cover
+
+Directx11tutorials.com
 
 Real-Time Rendering( website created for the book of the same name ), has a huge list of books, many of which are free online versions.
 (E-books on many subject).
