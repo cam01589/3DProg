@@ -33,14 +33,7 @@ I have found that Nasa has many free 3d models for download, these could come in
 
 Gamedev.net
 
-free online book
-Programming Vertex Geometry and Pixel Shaders
-content.gpwiki.org/index.php/D3DBook:Book_cover
-
 Directx11tutorials.com
-
-Real-Time Rendering( website created for the book of the same name ), has a huge list of books, many of which are free online versions.
-(E-books on many subject).
 
 HLSL Tutorial
 www.neatware.com/lbstudio/web/hlsl.html
@@ -48,11 +41,7 @@ shader tutorials
 
 www.yakimo3D.com
 
-gpuexperiments.blogspot.co.uk
-
 users.skynet.be/fquake
-
-blogs.msdn.com/b/directx/archive/2010/06/15/introducing-the-directcompute-expert-roundtable-discussion
 
 www.microsoftpde.com/2009/p09-16
 
@@ -63,6 +52,21 @@ www.rastertek.com
 www.braynzarsoft.net
 
 KHANACADEMY math video tutorials
+
+	Blogs
+
+blogs.msdn.com/b/directx/archive/2010/06/15/introducing-the-directcompute-expert-roundtable-discussion
+
+gpuexperiments.blogspot.co.uk
+
+	Online Books
+
+free online book
+Programming Vertex Geometry and Pixel Shaders
+content.gpwiki.org/index.php/D3DBook:Book_cover
+
+Real-Time Rendering( website created for the book of the same name ), has a huge list of books, many of which are free online versions.
+(E-books on many subject).
 
 	Books
 
