@@ -1,0 +1,81 @@
+Diary for Program 3D Applications
+Week 1 and 2
+Sanity Fortnight
+
+I was using the first computer within the room.
+DirectX is installed and working correctly
+Visual studio is installed and working correctly
+(I have opened any run the tutorials that shipped with directX)
+
+Researching Learning Resources
+
+	Software
+
+During my resarch I stumbled apon NShader, which is an extension for visual studio 2008/2010.  NShader adds support for syntax highlighting for various shader languages.
+( support has just been added for vs2012 so may be buggy )
+( Express editions are not supported as they do not allow community addons )
+
+I have installed NShader on my home computer, but I have as yet not installed it on the computer that I will be using dureing lessons. ( This is because I cannot find the admin logon in my notes, remember to ask Andy for this. )
+
+I have Created a github account.
+
+PIX (used for error checking of directx calls )
+I have not yet looked into this.
+
+	Resources
+Added John D Carmack to my following list on twitter.
+Added Morgan McGuire to my following list on twitter.(Nvidia)
+
+I have found that Nasa has many free 3d models for download, these could come in handy in the future so I need to have a look.
+
+	Online
+
+Real-Time Rendering( website created for the book of the same name ), has a huge list of books, many of which are free online versions.
+(E-books on many subject).
+
+HLSL Tutorial
+www.neatware.com/lbstudio/web/hlsl.html
+shader tutorials
+
+www.yakimo3D.com
+
+gpuexperiments.blogspot.co.uk
+
+users.skynet.be/fquake
+
+blogs.msdn.com/b/directx/archive/2010/06/15/introducing-the-directcompute-expert-roundtable-discussion
+
+www.microsoftpde.com/2009/p09-16
+
+www.rorydriscoll.com
+
+www.rastertek.com
+
+www.braynzarsoft.net
+
+KHANACADEMY math video tutorials
+
+	Books
+
+Books I own
+
+Game Coding Complete 4th edition
+(Already a third of the way through this book)
+
+The CG tutorial
+
+c++ For Games programmers Second Edition
+
+Beginning Directx 11 (kindle edition)
+(started reading this book)
+
+Essential Mathematics for games and interactive applications
+
+Plus many, many more on my bookshelf such as programming books, AI graphics etc.#
+
+
+	Books to buy.
+
+
+
+
