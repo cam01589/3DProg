@@ -217,17 +217,34 @@ void InitD3D(HWND hWnd)
 // this is the function used to render a single frame
 void RenderFrame(void)
 {
-    D3DXMATRIX matRotate, matView, matProjection;
-    D3DXMATRIX matFinal;
+    D3DXMATRIX matRotateY[4], matView, matRotateZ[4], matProjection, matTranslate[4];
+    D3DXMATRIX matFinal[4];
 
     static float Time = 0.0f; Time += 0.001f;
 
+
+
     // create a world matrices
-    D3DXMatrixRotationY(&matRotate, Time);
+	D3DXMatrixRotationZ( &matRotateZ[0], Time / 2 );
+    D3DXMatrixRotationY( &matRotateY[0], Time );
+	
+	D3DXMatrixRotationZ( &matRotateZ[1], Time );
+	D3DXMatrixRotationY( &matRotateY[1], Time + 3.14159f );
+	
+	D3DXMatrixRotationZ( &matRotateZ[2], Time * 2 );
+	D3DXMatrixRotationY( &matRotateY[2], Time );
+	
+	D3DXMatrixRotationZ( &matRotateZ[3], -Time );
+	D3DXMatrixRotationY( &matRotateY[3], Time + 3.14159f );
+	
+	D3DXMatrixTranslation( &matTranslate[0], 0.0f, 0.0f, 0.0f );
+	D3DXMatrixTranslation( &matTranslate[1], 0.0f, 3.0f, 0.0f );
+	D3DXMatrixTranslation( &matTranslate[2], 0.0f, 6.0f, 0.0f );
+	D3DXMatrixTranslation( &matTranslate[3], 0.0f, 9.0f, 0.0f );
 
     // create a view matrix
     D3DXMatrixLookAtLH(&matView,
-                       &D3DXVECTOR3(0.0f, 9.0f, 24.0f),   // the camera position
+                       &D3DXVECTOR3(0.0f, 0.5f, 31.5f),   // the camera position
                        &D3DXVECTOR3(0.0f, 0.0f, 0.0f),    // the look-at position
                        &D3DXVECTOR3(0.0f, 1.0f, 0.0f));   // the up direction
 
@@ -238,9 +255,17 @@ void RenderFrame(void)
                                1.0f,                                       // near view-plane
                                100.0f);                                    // far view-plane
 
+	matRotateY[0] = matRotateY[0] * matRotateZ[0];
+	matRotateY[1] = matRotateY[1] * matRotateZ[1];
+	matRotateY[2] = matRotateY[2] * matRotateZ[2];
+	matRotateY[3] = matRotateY[3] * matRotateZ[3];
     // create the final transform
-    matFinal = matRotate * matView * matProjection;
+    matFinal[0] = matTranslate[0] * matRotateY[0] * matView * matProjection;
+	matFinal[1] = matTranslate[1] * matRotateY[1] * matView * matProjection;
+	matFinal[2] = matTranslate[2] * matRotateY[2] * matView * matProjection;
+	matFinal[3] = matTranslate[3] * matRotateY[3] * matView * matProjection;
 
+	
     // clear the back buffer to a deep blue
     devcon->ClearRenderTargetView(backbuffer, D3DXCOLOR(0.0f, 0.2f, 0.4f, 1.0f));
 
@@ -257,7 +282,13 @@ void RenderFrame(void)
         devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         // draw the Model
-        devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal, 0, 0);
+        devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[0], 0, 0);
+        devcon->DrawIndexed(18, 0, 0);
+		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[1], 0, 0);
+        devcon->DrawIndexed(18, 0, 0);
+		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[2], 0, 0);
+        devcon->DrawIndexed(18, 0, 0);
+		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[3], 0, 0);
         devcon->DrawIndexed(18, 0, 0);
 		
 

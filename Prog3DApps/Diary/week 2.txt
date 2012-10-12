@@ -29,6 +29,8 @@ I am currently working on instancing a pyramid, using the rastertek instancing t
 
 Had a bit of trouble using github today so I must remember to watch the tutorial videos.
 
+Managed to get instancing working, added some translations and rotations, now im going back to the directxtutorial.com tutorials.
+
 
 
 
