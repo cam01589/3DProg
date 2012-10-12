@@ -11,3 +11,5 @@
 11 - ConstBuffer
 12 - ConstBufferP2
 13 - 3DTransform
+14 - RenderingDepth
+15 - SimpleModeling

@@ -198,8 +198,8 @@ void InitD3D( HWND hWnd )
 void RenderFrame( void )
 {
 
-	//yUp+=0.0001;
-	LA-=0.0001;
+	yUp+=0.0001;
+	LA+=0.0001;
 		
 	D3DXMATRIX matRotate, matTranslate, matView, matProjection, matFinal;
 
@@ -214,8 +214,8 @@ void RenderFrame( void )
 	
 	// Create a view matrix
 	D3DXMatrixLookAtLH( &matView,
-						&D3DXVECTOR3( 1.5f, LA, 1.5f ),	// The camera position
-						&D3DXVECTOR3( 0.0f, 1.0f, 0.0f ),	// The look-at position
+						&D3DXVECTOR3( 1.5f, 0.5f, 1.5f ),	// The camera position
+						&D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),	// The look-at position
 						&D3DXVECTOR3( 0.0f, 1.0f, 0.0f ));	// the up direction
 
 	// Create a projection matrix

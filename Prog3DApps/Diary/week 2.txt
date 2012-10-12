@@ -1,0 +1,32 @@
+Week 2
+
+Using 1st computer opposite projector, facing door.
+connected to ps3 devkit 6
+
+Multiple crashes on this computer.
+
+Some of the directx tutorials would not run.
+
+Direct3D is throwing an error, saying DXSDK is out of date.
+Tried to reinstall but reinstall keeps failing
+need to bring this up with service desk.
+
+
+Just looked through my bookmarks and have remembered that I have a premium account with 
+directxtutorial.com and will have a look at the tutorials for direct3d11.
+
+Has been recommended by Andy that I take a look at the github tutorial video, and as such will do this during the week.
+
+I have been following the directxtutorial.com's tutorials and came across a runtime error, tried the diagnostic tools and a search online,
+but what I realised is that the tutorials are using shader model 5 where as my graphics card only supports 4.1 so I have changed this im my code ( aware that this may cause problems in later tutorials. )
+
+GPU-Z
+www.techpowerup.com/gpuz is a utility which can be used to give details of your graphics hardware ( I used this to check my support for shader model ).
+
+The tutorials on directxtutorial.com does not have error checking so I will look for some tutorials on this.
+
+I am currently working on instancing a pyramid.
+
+
+
+
