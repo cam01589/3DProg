@@ -23,9 +23,9 @@ but what I realised is that the tutorials are using shader model 5 where as my g
 GPU-Z
 www.techpowerup.com/gpuz is a utility which can be used to give details of your graphics hardware ( I used this to check my support for shader model ).
 
-The tutorials on directxtutorial.com does not have error checking so I will look for some tutorials on this.
+The tutorials on directxtutorial.com does not have error checking so I will look for some tutorials on this.	Currently on tutorial 16. 
 
-I am currently working on instancing a pyramid, using the rastertek instancing tutorial to see if i can encorporate it into my current work.
+I am currently working on instancing a pyramid, using the rastertek instancing tutorial to see if i can encorporate it into my current work. Only started this on thursday due getting carried away and following all of the tutorials.
 
 Had a bit of trouble using github today so I must remember to watch the tutorial videos.
 
