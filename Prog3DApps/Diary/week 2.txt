@@ -25,7 +25,9 @@ www.techpowerup.com/gpuz is a utility which can be used to give details of your 
 
 The tutorials on directxtutorial.com does not have error checking so I will look for some tutorials on this.
 
-I am currently working on instancing a pyramid.
+I am currently working on instancing a pyramid, using the rastertek instancing tutorial to see if i can encorporate it into my current work.
+
+Had a bit of trouble using github today so I must remember to watch the tutorial videos.
 
 
 
