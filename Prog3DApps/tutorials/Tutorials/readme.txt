@@ -12,4 +12,8 @@
 12 - ConstBufferP2
 13 - 3DTransform
 14 - RenderingDepth
-15 - SimpleModeling - Multiple Models with rotations
+15 - SimpleModeling - Multiple Models with rotations, edited from tutorial
+16 - AddingLight
+17 - AddingTextures
+18 - CustomRasterizer
+19 - TextureSampling

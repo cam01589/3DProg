@@ -323,6 +323,7 @@ void InitGraphics()
       // create vertices to represent the corners of the Hypercraft
     VERTEX OurVertices[] =
     {
+		//--------------------- PYRAMID
         // base
         {-1.0f, -1.0f,  1.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )},
         { 1.0f, -1.0f,  1.0f, D3DXCOLOR( 0.0f, 0.0f, 1.0f, 1.0f )},
@@ -331,8 +332,24 @@ void InitGraphics()
 
         // top
         { 0.0f, 1.0f, 0.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )}, 
+
+		//--------------------------------------------------------------------------------------------------
+
+		//-------------CUBE
+		 {(-1.0f, 1.0f, -1.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
+        {(1.0f, 1.0f, -1.0f), D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
+        {(-1.0f, -1.0f, -1.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)},
+        {(1.0f, -1.0f, -1.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {(-1.0f, 1.0f, 1.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f)},
+        {(1.0f, 1.0f, 1.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {(-1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)},
+        {(1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)}, 
+		//--------------------------------------------------------
+
+
 	};
 
+	
     // create the vertex buffer
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
@@ -376,20 +393,7 @@ void InitGraphics()
     devcon->Unmap(pIBuffer, NULL);
 //------------------------------------------------------
 
-	// create the index buffer
-    bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof( DWORD ) * 18;
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    bd.MiscFlags = 0;
-
-    dev->CreateBuffer(&bd, NULL, &pIBuffer);
-
-    devcon->Map(pIBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
-    memcpy(ms.pData, OurIndices, sizeof(OurIndices));                   // copy the data
-    devcon->Unmap(pIBuffer, NULL);
-
-
+	
 
 }
 

@@ -1,0 +1,38 @@
+Been a bit lapse in my diary keeping this week, but I have now completed all of the tutorials from directxtutorial.com, which are
+
+Win32: Basics
+Lesson 1: The Parts of a Game
+Lesson 2: A Primer of Basic Windows
+Lesson 3: Creating a Window
+Lesson 4: Window Size and Client Size
+Lesson 5: The Real-Time Message Loop
+
+Direct3D: Getting Started
+Lesson 1: Understanding Graphics Concepts
+Lesson 2: Initializing Direct3D
+Lesson 3: Rendering Frames
+Lesson 4: Going FullScreen
+Lesson 5: Drawing a Triangle
+
+Direct3D: Writing Shaders
+Lesson 1: The Rendering Pipeline
+Lesson 2: Introduction to HLSL Part 1
+Lesson 3: Introduction to HLSL Part 2
+Lesson 4: Constant Buffers Part 1
+Lesson 5: Constant Buffers Part 2
+
+Direct3D: Moving to 3D
+Lesson 1: 3D Transformations
+Lesson 2: Rendering Depth
+Lesson 3: Simple Modeling
+Lesson 4: Adding Light
+Lesson 5: Adding Textures
+
+Direct3D: Device States
+Lesson 1: Customizing the Rasterizer
+Lesson 2: Texture Sampling
+Lesson 3: Color Blending
+
+I have begun editing some of the tutorials to increase my understanding of how they work.
+
+My next project is to add keyboard and mouse input as I have not decided on the type of game my final project will be I am not sure which of these I will need.
