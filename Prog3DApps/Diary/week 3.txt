@@ -36,3 +36,7 @@ Lesson 3: Color Blending
 I have begun editing some of the tutorials to increase my understanding of how they work.
 
 My next project is to add keyboard and mouse input as I have not decided on the type of game my final project will be I am not sure which of these I will need.
+
+Keyboard input is now working.
+
+Next I will add mouse input and then error checking, starting with loading texture errors.

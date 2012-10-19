@@ -27,6 +27,8 @@ ID3D11Buffer *pVBuffer;                // the pointer to the vertex buffer
 ID3D11Buffer *pCBuffer;                // the pointer to the constant buffer
 ID3D11Buffer *pIBuffer;                // the pointer to the index buffer
 
+bool Rotate = FALSE;
+
 // various buffer structs
 struct VERTEX{FLOAT X, Y, Z; D3DXCOLOR Color;};
 struct PERFRAME{D3DXCOLOR Color; FLOAT X, Y, Z;};
@@ -37,6 +39,9 @@ void RenderFrame(void);     // renders a single frame
 void CleanD3D(void);        // closes Direct3D and releases memory
 void InitGraphics(void);    // creates the shape to render
 void InitPipeline(void);    // loads and prepares the shaders
+
+
+
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -113,6 +118,26 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 {
     switch(message)
     {
+	case WM_KEYDOWN:
+		switch( wParam )
+		{
+			// User presses escape key to exit program
+		case VK_ESCAPE:
+			PostQuitMessage( 0 );
+			break;
+			// User presses A key
+		case 0x41:
+			Rotate = FALSE;
+			break;
+
+			// User presses D key
+		case 0x44:
+			Rotate = TRUE;
+			break;
+		}
+		
+		break; // Needed else all key input quits program
+
         case WM_DESTROY:
             {
                 PostQuitMessage(0);
@@ -223,20 +248,38 @@ void RenderFrame(void)
     static float Time = 0.0f; Time += 0.001f;
 
 
+	if( Rotate == FALSE )
+	{
+		// create a world matrices
+		D3DXMatrixRotationZ( &matRotateZ[0], Time / 2 );
+		D3DXMatrixRotationY( &matRotateY[0], Time );
+	
+		D3DXMatrixRotationZ( &matRotateZ[1], Time );
+		D3DXMatrixRotationY( &matRotateY[1], Time + 3.14159f );
+	
+		D3DXMatrixRotationZ( &matRotateZ[2], Time * 2 );
+		D3DXMatrixRotationY( &matRotateY[2], Time );
+	
+		D3DXMatrixRotationZ( &matRotateZ[3], -Time );
+		D3DXMatrixRotationY( &matRotateY[3], Time + 3.14159f );
+	}
+	else if( Rotate == TRUE )
+	{
+		// create a world matrices
+		D3DXMatrixRotationZ( &matRotateZ[0], Time * 2 );
+		D3DXMatrixRotationY( &matRotateY[0], Time );
+	
+		D3DXMatrixRotationZ( &matRotateZ[1], -Time );
+		D3DXMatrixRotationY( &matRotateY[1], Time + 3.14159f );
+	
+		D3DXMatrixRotationZ( &matRotateZ[2], Time - 2 );
+		D3DXMatrixRotationY( &matRotateY[2], Time );
+	
+		D3DXMatrixRotationZ( &matRotateZ[3], Time );
+		D3DXMatrixRotationY( &matRotateY[3], Time + 3.14159f );
+	}
 
-    // create a world matrices
-	D3DXMatrixRotationZ( &matRotateZ[0], Time / 2 );
-    D3DXMatrixRotationY( &matRotateY[0], Time );
-	
-	D3DXMatrixRotationZ( &matRotateZ[1], Time );
-	D3DXMatrixRotationY( &matRotateY[1], Time + 3.14159f );
-	
-	D3DXMatrixRotationZ( &matRotateZ[2], Time * 2 );
-	D3DXMatrixRotationY( &matRotateY[2], Time );
-	
-	D3DXMatrixRotationZ( &matRotateZ[3], -Time );
-	D3DXMatrixRotationY( &matRotateY[3], Time + 3.14159f );
-	
+
 	D3DXMatrixTranslation( &matTranslate[0], 0.0f, 0.0f, 0.0f );
 	D3DXMatrixTranslation( &matTranslate[1], 0.0f, 3.0f, 0.0f );
 	D3DXMatrixTranslation( &matTranslate[2], 0.0f, 6.0f, 0.0f );
