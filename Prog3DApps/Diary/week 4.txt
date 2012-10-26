@@ -1,0 +1,14 @@
+Good progress made
+
+I have both keyboard and mouse input working.
+
+Challenges to work on from Andy are to Draw multiple different shapes - Main challenge and if I can 
+Have an object "moving" across the screen and "bouncing" off the edges.
+If I have extra time I am going to get my error checking working.
+
+I have very simple collision working using checks to see if my object intersects with screen_width.
+
+I have discovered that I have had bracket around my second objects vertices which was stopping it from being drawn so I have no idea how many of my attempts would have actually worked, so now I will have to try them all again.
+
+
+

@@ -15,19 +15,20 @@
 #define SCREEN_HEIGHT 600
 
 // global declarations
-IDXGISwapChain *swapchain;             // the pointer to the swap chain interface
-ID3D11Device *dev;                     // the pointer to our Direct3D device interface
-ID3D11DeviceContext *devcon;           // the pointer to our Direct3D device context
-ID3D11RenderTargetView *backbuffer;    // the pointer to our back buffer
-ID3D11DepthStencilView *zbuffer;       // the pointer to our depth buffer
-ID3D11InputLayout *pLayout;            // the pointer to the input layout
-ID3D11VertexShader *pVS;               // the pointer to the vertex shader
-ID3D11PixelShader *pPS;                // the pointer to the pixel shader
-ID3D11Buffer *pVBuffer;                // the pointer to the vertex buffer
-ID3D11Buffer *pCBuffer;                // the pointer to the constant buffer
-ID3D11Buffer *pIBuffer;                // the pointer to the index buffer
+IDXGISwapChain							*swapchain;     // the pointer to the swap chain interface
+ID3D11Device							*dev;           // the pointer to our Direct3D device interface
+ID3D11DeviceContext						*devcon;        // the pointer to our Direct3D device context
+ID3D11RenderTargetView					*backbuffer;    // the pointer to our back buffer
+ID3D11DepthStencilView					*zbuffer;       // the pointer to our depth buffer
+ID3D11InputLayout						*pLayout;       // the pointer to the input layout
+ID3D11VertexShader						*pVS;           // the pointer to the vertex shader
+ID3D11PixelShader						*pPS;           // the pointer to the pixel shader
+ID3D11Buffer							*pVBuffer;      // the pointer to the vertex buffer
+ID3D11Buffer							*pCBuffer;      // the pointer to the constant buffer
+ID3D11Buffer							*pIBuffer;      // the pointer to the index buffer
 
-bool Rotate = FALSE;
+bool Rotate = FALSE; // Used for rotation switching between left spin and right
+bool Travel = TRUE; // Used for movement of pyramid 
 
 // various buffer structs
 struct VERTEX{FLOAT X, Y, Z; D3DXCOLOR Color;};
@@ -40,6 +41,7 @@ void CleanD3D(void);        // closes Direct3D and releases memory
 void InitGraphics(void);    // creates the shape to render
 void InitPipeline(void);    // loads and prepares the shaders
 
+float a = 0.000f; // Again this is used for movement of pyramid
 
 
 
@@ -274,8 +276,8 @@ void RenderFrame(void)
 	if( Rotate == FALSE )
 	{
 		// create a world matrices
-		D3DXMatrixRotationZ( &matRotateZ[0], Time / 2 );
-		D3DXMatrixRotationY( &matRotateY[0], Time );
+		D3DXMatrixRotationZ( &matRotateZ[0], 0);//Time / 2 );
+		D3DXMatrixRotationY( &matRotateY[0], 0);//Time );
 	
 		D3DXMatrixRotationZ( &matRotateZ[1], Time );
 		D3DXMatrixRotationY( &matRotateY[1], Time + 3.14159f );
@@ -289,8 +291,8 @@ void RenderFrame(void)
 	else if( Rotate == TRUE )
 	{
 		// create a world matrices
-		D3DXMatrixRotationZ( &matRotateZ[0], Time * 2 );
-		D3DXMatrixRotationY( &matRotateY[0], Time );
+		D3DXMatrixRotationZ( &matRotateZ[0], 0);//Time * 2 );
+		D3DXMatrixRotationY( &matRotateY[0], 0);//Time );
 	
 		D3DXMatrixRotationZ( &matRotateZ[1], -Time );
 		D3DXMatrixRotationY( &matRotateY[1], Time + 3.14159f );
@@ -302,8 +304,10 @@ void RenderFrame(void)
 		D3DXMatrixRotationY( &matRotateY[3], Time + 3.14159f );
 	}
 
+	
 
-	D3DXMatrixTranslation( &matTranslate[0], 0.0f, 0.0f, 0.0f );
+
+	D3DXMatrixTranslation( &matTranslate[0], a, 0.0f, 0.0f );
 	D3DXMatrixTranslation( &matTranslate[1], 0.0f, 3.0f, 0.0f );
 	D3DXMatrixTranslation( &matTranslate[2], 0.0f, 6.0f, 0.0f );
 	D3DXMatrixTranslation( &matTranslate[3], 0.0f, 9.0f, 0.0f );
@@ -321,10 +325,25 @@ void RenderFrame(void)
                                1.0f,                                       // near view-plane
                                100.0f);                                    // far view-plane
 
-	matRotateY[0] = matRotateY[0] * matRotateZ[0];
+	//matRotateY[0] = matRotateY[0] * matRotateZ[0];
 	matRotateY[1] = matRotateY[1] * matRotateZ[1];
 	matRotateY[2] = matRotateY[2] * matRotateZ[2];
 	matRotateY[3] = matRotateY[3] * matRotateZ[3];
+
+	//a = -15.75f;
+	float halfModel = 1.56f; // half width of my object
+	
+	if( Travel == FALSE )
+	a += 0.005f;
+	else if ( Travel == TRUE )
+	a -= 0.005f;
+
+	if( a <= ( FLOAT )-SCREEN_WIDTH / 45 + halfModel ) //-15.75f )
+		Travel = FALSE;
+	if( a >= ( FLOAT )SCREEN_WIDTH / 45 - halfModel ) //18.75f )
+		Travel = TRUE;
+	
+
     // create the final transform
     matFinal[0] = matTranslate[0] * matRotateY[0] * matView * matProjection;
 	matFinal[1] = matTranslate[1] * matRotateY[1] * matView * matProjection;
@@ -348,7 +367,14 @@ void RenderFrame(void)
         devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         // draw the Model
-        devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[0], 0, 0);
+        
+		for( int i = 0; i <= 4; i++) // 4 is the number of matFinal[i]
+		{
+			devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[i], 0, 0);
+			devcon->DrawIndexed(18, 0, 0);
+		}
+		/*
+		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[0], 0, 0);
         devcon->DrawIndexed(18, 0, 0);
 		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[1], 0, 0);
         devcon->DrawIndexed(18, 0, 0);
@@ -356,7 +382,7 @@ void RenderFrame(void)
         devcon->DrawIndexed(18, 0, 0);
 		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[3], 0, 0);
         devcon->DrawIndexed(18, 0, 0);
-		
+		*/
 
     // switch the back buffer and the front buffer
     swapchain->Present(0, 0);
@@ -389,27 +415,27 @@ void InitGraphics()
       // create vertices to represent the corners of the Hypercraft
     VERTEX OurVertices[] =
     {
-		//--------------------- PYRAMID
+		
+		////--------------------- PYRAMID
         // base
-        {-1.0f, -1.0f,  1.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )},
+		{-1.0f, -1.0f,  1.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )},
         { 1.0f, -1.0f,  1.0f, D3DXCOLOR( 0.0f, 0.0f, 1.0f, 1.0f )},
         {-1.0f, -1.0f, -1.0f, D3DXCOLOR( 1.0f, 0.0f, 0.0f, 1.0f )},
         { 1.0f, -1.0f, -1.0f, D3DXCOLOR( 0.0f, 1.0f, 1.0f, 1.0f )},
 
         // top
         { 0.0f, 1.0f, 0.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )}, 
-
-		//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 
 		//-------------CUBE
-		 {(-1.0f, 1.0f, -1.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
-        {(1.0f, 1.0f, -1.0f), D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
-        {(-1.0f, -1.0f, -1.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)},
-        {(1.0f, -1.0f, -1.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
-        {(-1.0f, 1.0f, 1.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f)},
-        {(1.0f, 1.0f, 1.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
-        {(-1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)},
-        {(1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)}, 
+		{-1.0f, 1.0f, -1.0f, D3DXCOLOR(1.0f, 0.3f, 0.0f, 1.0f)},
+        {1.0f, 1.0f, -1.0f, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
+        {-1.0f, -1.0f, -1.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)},
+        {1.0f, -1.0f, -1.0f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {-1.0f, 1.0f, 1.0f, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f)},
+        {1.0f, 1.0f, 1.0f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {-1.0f, -1.0f, 1.0f, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)},
+        {1.0f, -1.0f, 1.0f, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)}, 
 		//--------------------------------------------------------
 
 
@@ -437,6 +463,7 @@ void InitGraphics()
     // create the index buffer out of DWORDs
     DWORD OurIndices[] = 
     {
+		
        0, 2, 1, // Base
 	   1, 2, 3,
 	   0, 1, 4, // Sides
@@ -445,9 +472,26 @@ void InitGraphics()
 	   2, 0, 4,
     };
 
+	DWORD OurIndices1[] = 
+    {
+        0, 1, 2,    // side 1
+        2, 1, 3,
+        4, 0, 6,    // side 2
+        6, 0, 2,
+        7, 5, 6,    // side 3
+        6, 5, 4,
+        3, 1, 7,    // side 4
+        7, 1, 5,
+        4, 5, 0,    // side 5
+        0, 5, 1,
+        3, 7, 2,    // side 6
+        2, 7, 6,
+    };
+
+
     // create the index buffer
     bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof( DWORD ) * 18;
+    bd.ByteWidth = sizeof( DWORD ) * 36;//18;
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bd.MiscFlags = 0;

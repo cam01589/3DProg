@@ -118,6 +118,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 {
     switch(message)
     {
+		// Keyboard Input
 	case WM_KEYDOWN:
 		switch( wParam )
 		{
@@ -141,7 +142,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 		break; // Needed else all key input quits program
 
-		//------------------------
+
+		// Mouse Input	--------------------
 		
 	case WM_LBUTTONDOWN:
 		{
@@ -155,8 +157,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			Rotate = TRUE;
 			break;
 		}
-	break;
-		//------------------------
+	//--------------------
+		break;
+		
 	
 		
 	case WM_DESTROY:
@@ -349,7 +352,7 @@ void RenderFrame(void)
 
         // draw the Model
         devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[0], 0, 0);
-        devcon->DrawIndexed(18, 0, 0);
+        devcon->DrawIndexed(18, 0, 0 );
 		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[1], 0, 0);
         devcon->DrawIndexed(18, 0, 0);
 		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[2], 0, 0);
@@ -412,10 +415,30 @@ void InitGraphics()
         {(1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)}, 
 		//--------------------------------------------------------
 
-
+		
 	};
 
+	 // create vertices to represent the corners of the Hypercraft
+    VERTEX OurVertices2[] =
+    {
+		
+		//--------------------------------------------------------------------------------------------------
+
+		//-------------CUBE
+		 {(-1.0f, 1.0f, -1.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
+        {(1.0f, 1.0f, -1.0f), D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
+        {(-1.0f, -1.0f, -1.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)},
+        {(1.0f, -1.0f, -1.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {(-1.0f, 1.0f, 1.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f)},
+        {(1.0f, 1.0f, 1.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {(-1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)},
+        {(1.0f, -1.0f, 1.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)}, 
+		//--------------------------------------------------------
+
+
+	};
 	
+	//--------------------------------------------
     // create the vertex buffer
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
@@ -431,7 +454,8 @@ void InitGraphics()
     D3D11_MAPPED_SUBRESOURCE ms;
     devcon->Map(pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
     memcpy(ms.pData, OurVertices, sizeof(OurVertices));                 // copy the data
-    devcon->Unmap(pVBuffer, NULL);
+    memcpy(ms.pData, OurVertices2, sizeof( OurVertices2 ));
+	devcon->Unmap(pVBuffer, NULL);
 
 
     // create the index buffer out of DWORDs
@@ -444,15 +468,50 @@ void InitGraphics()
 	   3, 2, 4,
 	   2, 0, 4,
     };
+	//----------------------------------------------------------
+
+	// create the vertex buffer
+    D3D11_BUFFER_DESC bd1;
+    ZeroMemory(&bd1, sizeof(bd1));
+
+    bd1.Usage = D3D11_USAGE_DYNAMIC;
+    bd1.ByteWidth = sizeof(VERTEX) * 12;
+    bd1.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd1.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    dev->CreateBuffer(&bd1, NULL, &pVBuffer);
+
+    // copy the vertices into the buffer
+    // D3D11_MAPPED_SUBRESOURCE ms;
+    devcon->Map(pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
+    memcpy(ms.pData, OurVertices, sizeof(OurVertices2));                 // copy the data
+    //memcpy(ms.pData, OurVertices2, sizeof( OurVertices2 ));
+	devcon->Unmap(pVBuffer, NULL);
+
+	DWORD OurIndices2[] =
+	{
+		 0, 1, 2,    // side 1
+        2, 1, 3,
+        4, 0, 6,    // side 2
+        6, 0, 2,
+        7, 5, 6,    // side 3
+        6, 5, 4,
+        3, 1, 7,    // side 4
+        7, 1, 5,
+        4, 5, 0,    // side 5
+        0, 5, 1,
+        3, 7, 2,    // side 6
+        2, 7, 6,
+	};
 
     // create the index buffer
-    bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof( DWORD ) * 18;
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    bd.MiscFlags = 0;
+    bd1.Usage = D3D11_USAGE_DYNAMIC;
+    bd1.ByteWidth = sizeof( DWORD ) * 36;
+    bd1.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bd1.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    bd1.MiscFlags = 0;
 
-    dev->CreateBuffer(&bd, NULL, &pIBuffer);
+    dev->CreateBuffer(&bd1, NULL, &pIBuffer);
 
     devcon->Map(pIBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
     memcpy(ms.pData, OurIndices, sizeof(OurIndices));                   // copy the data
@@ -504,4 +563,16 @@ void InitPipeline()
 
     dev->CreateBuffer(&bd, NULL, &pCBuffer);
     devcon->VSSetConstantBuffers(0, 1, &pCBuffer);
+
+	
+	D3D11_BUFFER_DESC bd1;
+	ZeroMemory( &bd1, sizeof( bd1 ));
+
+	bd1.Usage = D3D11_USAGE_DEFAULT;
+	bd1.ByteWidth = 64;
+	bd1.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	dev->CreateBuffer( &bd1, NULL, &pCBuffer );
+	devcon->VSSetConstantBuffers( 0, 1, &pCBuffer );
+	
 }
