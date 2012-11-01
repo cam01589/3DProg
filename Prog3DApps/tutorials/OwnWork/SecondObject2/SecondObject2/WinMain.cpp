@@ -23,25 +23,21 @@ ID3D11DepthStencilView					*zbuffer;       // the pointer to our depth buffer
 ID3D11InputLayout						*pLayout;       // the pointer to the input layout
 ID3D11VertexShader						*pVS;           // the pointer to the vertex shader
 ID3D11PixelShader						*pPS;           // the pointer to the pixel shader
-ID3D11Buffer							*pVBuffer1;     // the pointer to the vertex buffer
-ID3D11Buffer							*pVBuffer2;
-ID3D11Buffer							*pCBuffer1;     // the pointer to the constant buffer
-ID3D11Buffer							*pCBuffer2;
-ID3D11Buffer							*pIBuffer1;     // the pointer to the index buffer
-ID3D11Buffer							*pIBuffer2;
+ID3D11Buffer							*pVBuffer;     // the pointer to the vertex buffer
+ID3D11Buffer							*pCBuffer;     // the pointer to the constant buffer
+ID3D11Buffer							*pIBuffer;     // the pointer to the index buffer
+
 
 struct VERTEX *pVertices;
 //DWORD *pIndices;
 
 bool Rotate = FALSE; // Used for rotation switching between left spin and right
 bool Travel = TRUE; // Used for movement of pyramid 
-bool Pyramid = TRUE;
+bool Pyramid = FALSE;
 
 // various buffer structs
 struct VERTEX{FLOAT X, Y, Z; D3DXCOLOR Color;};
 struct PERFRAME{D3DXCOLOR Color; FLOAT X, Y, Z;};
-
-
 
 
 // function prototypes
@@ -52,8 +48,6 @@ void InitGraphics( void );    // creates the shape to render
 void InitPipeline( void );    // loads and prepares the shaders
 
 float a = 0.000f; // Again this is used for movement of pyramid
-
-
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
@@ -147,8 +141,6 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			Rotate = TRUE;
 			break;
 
-
-			
 		}
 
 		break; // Needed else all key input quits program
@@ -277,7 +269,7 @@ void InitD3D( HWND hWnd )
 // this is the function used to render a single frame
 void RenderFrame( void )
 {
-    D3DXMATRIX matRotateY[4], matView, matRotateZ[4], matProjection, matTranslate[4];
+    D3DXMATRIX matRotateY[4], matView, matRotateZ[4], matProjection, matTranslate[4], matRotateX[4];
     D3DXMATRIX matFinal[4];
 
     static float Time = 0.0f; Time += 0.001f;
@@ -335,18 +327,7 @@ void RenderFrame( void )
                                1.0f,                                       // near view-plane
                                100.0f );                                    // far view-plane
 
-	
-	for( int i = 1; i <= 3; i++ ) // Starts on 1 as rotations for 0 are done elsewhere 
-	{
-		matRotateY[i] = matRotateY[i] * matRotateZ[i];
-	}
-		//matRotateY[0] = matRotateY[0] * matRotateZ[0];
-	    //matRotateY[1] = matRotateY[1] * matRotateZ[1];
-		//matRotateY[2] = matRotateY[2] * matRotateZ[2];
-		//matRotateY[3] = matRotateY[3] * matRotateZ[3];
-
-	
-
+	/*
 	//a = -15.75f;
 	float halfModel = 1.56f; // half width of my object
 	
@@ -359,20 +340,17 @@ void RenderFrame( void )
 		Travel = FALSE;
 	if( a >= ( FLOAT )SCREEN_WIDTH / 45 - halfModel ) //18.75f )
 		Travel = TRUE;
+	*/
+
 	
 
     // create the final transform
-	for( int i = 0; i <= 3; i++)
+	for( int i = 0; i <= 3; i++) // 0 - 3
 	{
-		matFinal[i] = matTranslate[i] * matRotateY[i] * matView * matProjection;
+		matFinal[i] = matTranslate[i] * matRotateZ[i] * matRotateY[i] * matView * matProjection;
 	}
 
-	/*
-	matFinal[0] = matTranslate[0] * matRotateY[0] * matView * matProjection;
-	matFinal[1] = matTranslate[1] * matRotateY[1] * matView * matProjection;
-	matFinal[2] = matTranslate[2] * matRotateY[2] * matView * matProjection;
-	matFinal[3] = matTranslate[3] * matRotateY[3] * matView * matProjection;
-	*/
+	
 	
     // clear the back buffer to a deep blue
     devcon->ClearRenderTargetView( backbuffer, D3DXCOLOR( 0.0f, 0.2f, 0.4f, 1.0f ));
@@ -383,39 +361,27 @@ void RenderFrame( void )
         // select which vertex buffer to display
         UINT stride = sizeof( VERTEX );
         UINT offset = 0;
-        devcon->IASetVertexBuffers( 0, 1, &pVBuffer1, &stride, &offset );
-        devcon->IASetIndexBuffer( pIBuffer1, DXGI_FORMAT_R32_UINT, 0 );
+        devcon->IASetVertexBuffers( 0, 1, &pVBuffer, &stride, &offset );
+        devcon->IASetIndexBuffer( pIBuffer, DXGI_FORMAT_R32_UINT, 0 );
 		
 		devcon->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-		
-        //offset = 1;
-		devcon->IASetVertexBuffers( 0, 2, &pVBuffer2, &stride, &offset );
-        devcon->IASetIndexBuffer( pIBuffer2, DXGI_FORMAT_R32_UINT, 1 );
-		
+
         // select which primtive type we are using
         
 
         for( int i = 0; i < 3; i++)
 		{
-				devcon->UpdateSubresource( pCBuffer1, 0, 0, &matFinal[i], 0, 0 );
+				devcon->UpdateSubresource( pCBuffer, 0, 0, &matFinal[i], 0, 0 );
 				devcon->DrawIndexed( 18, 0, 0 );
+				//devcon->Draw( 5, 0 );
 		}
-		/*
-		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[0], 0, 0);
-        devcon->DrawIndexed(18, 0, 0);
-		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[1], 0, 0);
-        devcon->DrawIndexed(18, 0, 0);
-		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[2], 0, 0);
-        devcon->DrawIndexed(18, 0, 0);
-		devcon->UpdateSubresource(pCBuffer, 0, 0, &matFinal[3], 0, 0);
-        devcon->DrawIndexed(18, 0, 0);
-		*/
-		//Pyramid = FALSE;
-		//InitGraphics();
+		
 
-		devcon->UpdateSubresource( pCBuffer2, 0, 0, &matFinal[3], 0, 0 );
-		devcon->DrawIndexed( 36, 0, 0 );
+		devcon->UpdateSubresource( pCBuffer, 0, 0, &matFinal[3], 0, 0 );
+		//devcon->DrawIndexed( 12, 5, 6 );//12
+		//devcon->Draw( 18, 0 );
+		devcon->DrawIndexed( 48, 6, 5 );
 
     // switch the back buffer and the front buffer
     swapchain->Present( 0, 0 );
@@ -432,12 +398,9 @@ void CleanD3D( void )
     pVS->Release();
     pPS->Release();
     zbuffer->Release();
-    pVBuffer1->Release();
-	pVBuffer2->Release();
-    pCBuffer1->Release();
-	pCBuffer2->Release();
-    pIBuffer1->Release();
-	pIBuffer2->Release();
+    pVBuffer->Release();
+	pCBuffer->Release();
+	pIBuffer->Release();
 	swapchain->Release();
     backbuffer->Release();
     dev->Release();
@@ -460,62 +423,7 @@ void InitGraphics()
 		// top
         { 0.0f,  1.0f,  0.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )}, 
 		//--------------------------------------------------------------------------------------------------
-	};
-
-	// create the index buffer out of DWORDs
-    DWORD OurIndices1[] = 
-    {
-		
-       0, 2, 1, // Base
-	   1, 2, 3,
-	   0, 1, 4, // Sides
-	   1, 3, 4,
-	   3, 2, 4,
-	   2, 0, 4,
-    };
-
-
 	
-
-
-    // create the vertex buffer
-    D3D11_BUFFER_DESC bd;
-	ZeroMemory( &bd, sizeof( bd ));
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( VERTEX ) * 5;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	dev->CreateBuffer( &bd, NULL, &pVBuffer1 );
-	
-	// copy the vertices into the buffer
-	D3D11_MAPPED_SUBRESOURCE ms;
-
-	devcon->Map( pVBuffer1, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms );    // map the buffer
-	//if( Pyramid == TRUE )
-	memcpy( ms.pData, OurVertices1, sizeof( OurVertices1 ));
-	devcon->Unmap( pVBuffer1, NULL );
-
-	// pIndices = OurIndices;
-	//pVertices = OurVertices;
-	
-    // create the index buffer
-    bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( DWORD ) * 18;//18;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags = 0;
-
-	dev->CreateBuffer( &bd, NULL, &pIBuffer1 );
-
-	devcon->Map( pIBuffer1, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms );    // map the buffer
-    //if( Pyramid == TRUE )
-	memcpy( ms.pData, OurIndices1, sizeof( OurIndices1 ));                   // copy the data
-	devcon->Unmap( pIBuffer1, NULL );
-
-	
-
-	VERTEX OurVertices2[] =
-	{
 		//-------------CUBE
 		{-1.0f,  1.0f, -1.0f, D3DXCOLOR( 1.0f, 0.3f, 0.0f, 1.0f )},
         { 1.0f,  1.0f, -1.0f, D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f )},
@@ -526,11 +434,22 @@ void InitGraphics()
         {-1.0f, -1.0f,  1.0f, D3DXCOLOR( 1.0f, 1.0f, 0.0f, 1.0f )},
         { 1.0f, -1.0f,  1.0f, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f )}, 
 		//--------------------------------------------------------
+	
 	};
 
-	DWORD OurIndices2[] = 
+	// create the index buffer out of DWORDs
+    DWORD OurIndices1[] = 
     {
-        0, 1, 2,    // side 1
+		// Pyramid
+       0, 2, 1, // Base
+	   1, 2, 3,
+	   0, 1, 4, // Sides
+	   1, 3, 4,
+	   3, 2, 4,
+	   2, 0, 4,
+    
+		// Cube
+		0, 1, 2,    // side 1
         2, 1, 3,
         4, 0, 6,    // side 2
         6, 0, 2,
@@ -542,42 +461,44 @@ void InitGraphics()
         0, 5, 1,
         3, 7, 2,    // side 6
         2, 7, 6,
-    };
-
-	// create the vertex buffer
-	D3D11_BUFFER_DESC bd1;
-	ZeroMemory( &bd1, sizeof( bd1 ));
-	bd1.Usage = D3D11_USAGE_DYNAMIC;
-	bd1.ByteWidth = sizeof( VERTEX ) * 8;
-	bd1.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd1.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	dev->CreateBuffer( &bd1, NULL, &pVBuffer2 );
-
-    // copy the vertices into the buffer
-    D3D11_MAPPED_SUBRESOURCE ms1;
-
-    devcon->Map( pVBuffer2, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms1 );
-	memcpy( ms1.pData, OurVertices2, sizeof( OurVertices2 ));                 // copy the data
-    devcon->Unmap( pVBuffer2, NULL );
-
-
-	// create the index buffer
-	bd1.Usage = D3D11_USAGE_DYNAMIC;
-	bd1.ByteWidth = sizeof( DWORD ) * 36;
-    bd1.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bd1.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    bd1.MiscFlags = 0;
-
-    dev->CreateBuffer( &bd1, NULL, &pIBuffer2 );
-	    
-	devcon->Map( pIBuffer2, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms1 );    // map the buffer
-
-	//else
-	memcpy( ms1.pData, OurIndices2, sizeof( OurIndices2 )); 
-	devcon->Unmap( pIBuffer2, NULL );
 	
-//------------------------------------------------------
+	};
+	
+	
 
+    // create the vertex buffer
+    D3D11_BUFFER_DESC bd;
+	ZeroMemory( &bd, sizeof( bd ));
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof( VERTEX ) * 64;//5;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	dev->CreateBuffer( &bd, NULL, &pVBuffer );
+	
+	// copy the vertices into the buffer
+	D3D11_MAPPED_SUBRESOURCE ms;
+
+	devcon->Map( pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms );    // map the buffer
+	//if( Pyramid == TRUE )
+	memcpy( ms.pData, OurVertices1, sizeof( OurVertices1 ));
+	devcon->Unmap( pVBuffer, NULL );
+
+	// pIndices = OurIndices;
+	//pVertices = OurVertices;
+	
+    // create the index buffer
+    bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof( DWORD ) * 64;//18;
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = 0;
+
+	dev->CreateBuffer( &bd, NULL, &pIBuffer );
+
+	devcon->Map( pIBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms );    // map the buffer
+    //if( Pyramid == TRUE )
+	memcpy( ms.pData, OurIndices1, sizeof( OurIndices1 ));                   // copy the data
+	devcon->Unmap( pIBuffer, NULL );
 	
 }
 
@@ -598,17 +519,17 @@ void InitPipeline()
     devcon->VSSetShader(pVS, 0, 0);
     devcon->PSSetShader(pPS, 0, 0);
 
-    // create the input layout object
-    D3D11_INPUT_ELEMENT_DESC ied[] =
-    {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		// create the input layout object
+		D3D11_INPUT_ELEMENT_DESC ied[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
     
-		// Data from the instance buffer
-		{ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT,    1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{ "INSTANCECOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    1, 12, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA }
-	};
+			// Data from the instance buffer
+			{ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT,    1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{ "INSTANCECOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    1, 12, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA }
+		};
 
     dev->CreateInputLayout( ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout );
     devcon->IASetInputLayout( pLayout );
@@ -620,21 +541,8 @@ void InitPipeline()
     bd.ByteWidth = 64;
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-    dev->CreateBuffer( &bd, NULL, &pCBuffer1 );
-    devcon->VSSetConstantBuffers( 0, 1, &pCBuffer1 );
+    dev->CreateBuffer( &bd, NULL, &pCBuffer );
+    devcon->VSSetConstantBuffers( 0, 1, &pCBuffer );
 
-
-	
-
-	D3D11_BUFFER_DESC bd1;
-    ZeroMemory( &bd1, sizeof( bd1 ));
-
-    bd1.Usage = D3D11_USAGE_DEFAULT;
-    bd1.ByteWidth = 64;
-    bd1.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-
-    dev->CreateBuffer( &bd1, NULL, &pCBuffer2 );
-    devcon->VSSetConstantBuffers( 1, 2, &pCBuffer2 );
-	
-	
+		
 }

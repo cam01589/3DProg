@@ -330,6 +330,8 @@ void RenderFrame(void)
 	matRotateY[2] = matRotateY[2] * matRotateZ[2];
 	matRotateY[3] = matRotateY[3] * matRotateZ[3];
 
+
+	// Collision detection data
 	//a = -15.75f;
 	float halfModel = 1.56f; // half width of my object
 	
@@ -342,7 +344,8 @@ void RenderFrame(void)
 		Travel = FALSE;
 	if( a >= ( FLOAT )SCREEN_WIDTH / 45 - halfModel ) //18.75f )
 		Travel = TRUE;
-	
+	//------------------------------------------------------
+
 
     // create the final transform
     matFinal[0] = matTranslate[0] * matRotateY[0] * matView * matProjection;
