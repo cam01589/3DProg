@@ -1,0 +1,14 @@
+Work given to me by Andy
+
+Be able to draw an arbitrary number of objects at random locations.
+
+Investigate textures
+
+and further challenge, transparancy
+
+I have managed to get my third object working correctly, I believe I have this worked out now but will add more objects to check.
+I looks as if I had settings mixed up from different tutorials, went through everything set everything again, seems to have fixed the issues I was having.
+
+I have textures working within my program.
+
+I have got colour blending working perfectly, but I have not yet started working on transparency.

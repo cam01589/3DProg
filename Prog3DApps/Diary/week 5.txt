@@ -8,4 +8,6 @@ I have completed this work.
 
 I have managed to get sound working but the rest of my program only runs after I have quit out of the program.  I believe I could remedy this by putting the code to activate the sound within my run code section.  Will have a look at this soon.
 
-Installed visual studio 2012, had an incompatible pdb error that stopped my work from loading, cleaning the build seemed to clear this up
+Installed visual studio 2012, had an incompatible pdb error that stopped my work from loading, cleaning the build seemed to clear this up.
+
+Working on my buffer again still cannot work out the numbers for vertices etc.

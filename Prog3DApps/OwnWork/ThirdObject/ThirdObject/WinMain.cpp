@@ -370,9 +370,9 @@ void RenderFrame( void )
         // select which primtive type we are using
         
 		devcon->UpdateSubresource( pCBuffer, 0, 0, &matFinal[0], 0, 0 );
-				devcon->DrawIndexed( 78, 18, 10 );
+				devcon->DrawIndexed( 72, 18, 13 );// 0, 18, 13
 
-        for( int i = 1; i < 3; i++)
+        for( int i = 1; i < 3; i++ )
 		{
 				devcon->UpdateSubresource( pCBuffer, 0, 0, &matFinal[i], 0, 0 );
 				devcon->DrawIndexed( 18, 0, 0 );
@@ -383,7 +383,8 @@ void RenderFrame( void )
 		devcon->UpdateSubresource( pCBuffer, 0, 0, &matFinal[3], 0, 0 );
 		//devcon->DrawIndexed( 12, 5, 6 );//12
 		//devcon->Draw( 18, 0 );
-		devcon->DrawIndexed( 54, 6, 5 );
+		devcon->DrawIndexed( 54, 6, 5 );//54// 48
+		
 
     // switch the back buffer and the front buffer
     swapchain->Present( 0, 0 );
@@ -503,10 +504,12 @@ void InitGraphics()
     // create the vertex buffer
     D3D11_BUFFER_DESC bd;
 	ZeroMemory( &bd, sizeof( bd ));
+
 	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( VERTEX ) * 64;//5;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.ByteWidth = sizeof( VERTEX ) * ARRAYSIZE( OurVertices1 );//78;//64;//5;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER; // VERTEX
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	
 	dev->CreateBuffer( &bd, NULL, &pVBuffer );
 	
 	// copy the vertices into the buffer
@@ -522,7 +525,7 @@ void InitGraphics()
 	
     // create the index buffer
     bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( DWORD ) * 64;//18;
+	bd.ByteWidth = sizeof( DWORD ) * ARRAYSIZE( OurIndices1 );//74;//64;//18;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags = 0;

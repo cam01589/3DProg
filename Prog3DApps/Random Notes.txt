@@ -1,0 +1,12 @@
+Error	1	error LNK1207: incompatible PDB format in 'C:\Users\Dan\Documents\GitHub\3DProg\Prog3DApps\OwnWork\Hud\Hud\Debug\Hud.pdb'; delete and rebuild	C:\Users\Dan\Documents\GitHub\3DProg\Prog3DApps\OwnWork\Hud\Hud\LINK	Hud
+
+Have to delete the file so that it can be rebuilt?
+This does work.
+
+
+// Create an Orthographic matrix
+	D3DXMatrixOrthoLH (&matOrtho, 
+					1,  //(FLOAT)SCREEN_WIDTH,
+					 1,// (FLOAT)SCREEN_HEIGHT,
+					  1.0f,
+					  10.0f);

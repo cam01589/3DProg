@@ -1,0 +1,7 @@
+I am going to work on getting multiple textures loaded, this is now working using texture arrays.
+
+Work provided by Andy - Next, try drawing 2D "HUD" and "MENU" objects.
+ 
+I would suggest looking into ORTHOGRAPHIC perspective and drawing your scene in two stages. First, draw your perspective objects (3D shapes), THEN draw your HUD/MENU objects.
+
+sprites.
