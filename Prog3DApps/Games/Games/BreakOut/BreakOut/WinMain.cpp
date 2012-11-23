@@ -15,6 +15,10 @@
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 600
 
+float colRed = 0.0f, colGreen = 0.0f, colBlue = 0.0f;
+
+int const bufferSizes = 5;
+
 const int TexCount = 4; // How many textures we have
 int Lives = 3;
 
@@ -24,9 +28,12 @@ float battY = 0;		// As above
 float ballX = 0;
 float ballY = 0;
 
-float velocity = 0.000f; // Again this is used for movement of pyramid
-bool Travel = TRUE; // Used for movement of object
+float heartX = -300;
+float heartY = 350;
 
+
+bool TravelUp = TRUE; // Used for movement of object
+bool TravelLeft = TRUE;
 // Global declarations
 IDXGISwapChain					*swapchain;					// The pointer to the swap chain interface
 ID3D11Device					*dev;						// The pointer to our Direct3D device interface
@@ -109,7 +116,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
 
     hWnd = CreateWindowEx( NULL,
                            L"WindowClass",
-                           L"Our First Direct3D Program",
+                           L"BreakOut",
                            WS_OVERLAPPEDWINDOW,
                            100,
                            100,
@@ -313,6 +320,15 @@ void InitD3D( HWND hWnd )
 // This is the function used to render a single frame
 void RenderFrame( void )
 {
+	//if( colRed < 1.0f )
+	//colRed +=0.0001;
+	//else if ( colRed >= 1.0f )
+	//colRed -=0.0001;
+
+	//colGreen += 0.0002;
+	//colBlue += 0.0003;
+
+
    // Collision detection data
 	//a = -15.75f;
 	float halfModel = 1.56f; // half width of my object
@@ -322,27 +338,54 @@ void RenderFrame( void )
 	else if ( Travel == TRUE )
 	ballY -= 0.05f;
 	*/
-	if( Travel == FALSE )
-	ballX += 0.05f;
-	else if ( Travel == TRUE )
-	ballX -= 0.05f;
-	/*
+	if( TravelUp == FALSE )
+	ballX += 0.25f;
+	else if ( TravelUp == TRUE )
+	ballX -= 0.25f;
+	if( TravelLeft == TRUE )
+	ballY += 0.050f;
+	else if( TravelLeft == FALSE )
+	ballY -= 0.060f;
+
+	// Left and Right
 	if( ballY <= ( FLOAT )-SCREEN_WIDTH / 2 + 10 ) //-15.75f )
-		Travel = FALSE;
-	if( ballY >= ( FLOAT )SCREEN_WIDTH / 2 - 10 ) //18.75f )
-		Travel = TRUE;
-	*/
-	if( ballX <= ( FLOAT )-SCREEN_HEIGHT / 2 + 10 ) //-15.75f )
-		Travel = FALSE;
-	
-	if(( ballX > battX - 200 ) && ( ballX < battX + 200 ))
 	{
-		if( ballX >= battX - 125 ) //18.75f )
-			Travel = TRUE;
+		TravelLeft = TRUE;
 	}
+	if( ballY >= ( FLOAT )SCREEN_WIDTH / 2 - 10 ) //18.75f )
+	{
+		TravelLeft = FALSE;
+	}
+	// ball hits screen top
+	if( ballX <= ( FLOAT )-SCREEN_HEIGHT / 2 + 10 ) //-15.75f )
+	{
+		TravelUp = FALSE;
+	}
+	
+
+			// Ball hits bat
+		if(( ballY > battY - 80 ) && ( ballY < battY + 80  ))
+		{
+			if( ballX >= battX - 125 ) //18.75f )
+				TravelUp = TRUE;
+
+		}
+		
+		
+		// If the ball passes the bat
+		if( ballX > 250 )
+		{
+			Lives -= 1; // Lose life
+			ballX = -200;
+			battY = 0;
+			
+
+			
+		}
+		
 		//------------------------------------------------------
 
-		int const bufferSizes = 2;
+		
 
 	CBUFFER cBuffer[bufferSizes];
 
@@ -365,8 +408,19 @@ void RenderFrame( void )
 
 	D3DXMatrixTranslation( &matTranslate[1], ballX, ballY, 0.0f );
 	D3DXMatrixScaling( &matScale[1], 10.0, 10.0, 0.0f );
-    // Create a world matrices
     
+    // Lives section
+	D3DXMatrixTranslation( &matTranslate[2], heartX, heartY, 0.0f );
+	D3DXMatrixScaling( &matScale[2], 10.0, 10.0, 0.0f );
+
+	D3DXMatrixTranslation( &matTranslate[3], heartX, heartY - 20, 0.0f );
+	D3DXMatrixScaling( &matScale[3], 10.0, 10.0, 0.0f );
+
+	D3DXMatrixTranslation( &matTranslate[4], heartX, heartY - 40, 0.0f );
+	D3DXMatrixScaling( &matScale[4], 10.0, 10.0, 0.0f );
+
+
+
 	for( int i = 0; i < bufferSizes; i++ )
 	{
 		D3DXMatrixRotationY( &matRotateY[i], Time );
@@ -410,7 +464,7 @@ void RenderFrame( void )
 	
 
     // Clear the back buffer to a deep blue
-    devcon->ClearRenderTargetView( backbuffer, D3DXCOLOR( 0.0f,0.0f,0.0f,1.0f));//0.0f, 0.2f, 0.4f, 1.0f ));
+    devcon->ClearRenderTargetView( backbuffer, D3DXCOLOR( colRed, colGreen, colBlue, 1.0f ));//0.0f, 0.2f, 0.4f, 1.0f ));
 
     // Clear the depth buffer
     devcon->ClearDepthStencilView( zbuffer, D3D11_CLEAR_DEPTH, 1.0f, 0 );
@@ -436,6 +490,30 @@ void RenderFrame( void )
 		devcon->UpdateSubresource( pCBuffer, 0, 0, &cBuffer[1], 0, 0 );
         devcon->PSSetShaderResources( 0, 1, &pTexture[3] );
         devcon->DrawIndexed( 6, 0, 0 );
+
+		if( Lives > 0 )
+		{
+			// Draw the Heart
+			devcon->UpdateSubresource( pCBuffer, 0, 0, &cBuffer[2], 0, 0 );
+			devcon->PSSetShaderResources( 0, 1, &pTexture[2] );
+			devcon->DrawIndexed( 6, 0, 0 );
+		}
+
+		if( Lives > 1 )
+		{
+			// Draw the Heart
+			devcon->UpdateSubresource( pCBuffer, 0, 0, &cBuffer[3], 0, 0 );
+			devcon->PSSetShaderResources( 0, 1, &pTexture[2] );
+			devcon->DrawIndexed( 6, 0, 0 );
+		}
+
+		if( Lives > 2 )
+		{
+			// Draw the Heart
+			devcon->UpdateSubresource( pCBuffer, 0, 0, &cBuffer[4], 0, 0 );
+			devcon->PSSetShaderResources( 0, 1, &pTexture[2] );
+			devcon->DrawIndexed( 6, 0, 0 );
+		}
 
    // Switch the back buffer and the front buffer
     swapchain->Present( 0, 0 );
@@ -665,7 +743,15 @@ void InitStates()
     sd.MaxLOD = FLT_MAX;
     sd.MipLODBias = 0.0f;
 
-    dev->CreateSamplerState(&sd, &pSS);
+	dev->CreateSamplerState(&sd, &pSS);
+
+
+
+
+	ID3D11BlendState* g_pBlendState = NULL;
+
+ 
+
 
     D3D11_BLEND_DESC bd;
     bd.RenderTarget[0].BlendEnable = TRUE;
@@ -674,10 +760,11 @@ void InitStates()
     bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
     bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-    bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
     bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    bd.IndependentBlendEnable = FALSE;
-    bd.AlphaToCoverageEnable = FALSE;
-
-    dev->CreateBlendState(&bd, &pBS);
+	
+	bd.IndependentBlendEnable = FALSE;
+    bd.AlphaToCoverageEnable = TRUE;    // enable alpha-to-coverage
+	
+	dev->CreateBlendState(&bd, &pBS);
 }
