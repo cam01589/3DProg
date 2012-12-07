@@ -6,10 +6,9 @@
 #include <d3dx10.h>
 
 // Include the Direct3D Library file
-#pragma comment (lib, "d3dx10.lib")
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dx11.lib")
-
+#pragma comment (lib, "d3dx10.lib")
 
 // Define the screen resolution
 #define SCREEN_WIDTH  800
@@ -29,7 +28,7 @@ float heartY = 350;
 float menuX[2] = {-100.0f, 70.0f};
 float menuY[3] = {50.0f, 50.0f, 50.0f}; //{1.0f, 50.0f, 100.0f};
 float brickX =  -150;
-float brickY[11] = { 250, 200, 150, 100, 50, 0, -50, -100, -150, -200, -250 };
+float brickY[1] = { 250 };
 float colRed = 0.0f, colGreen = 0.0f, colBlue = 0.0f;
 float ballVelocity;
 float increase = 0;
@@ -46,24 +45,24 @@ bool end = FALSE;
 bool brick1 = TRUE, brick2 = TRUE, brick3 = TRUE, brick4 = TRUE, brick5 = TRUE, brick6 = TRUE, brick7 = TRUE, brick8 = TRUE,  brick9 = TRUE, brick10 = TRUE, brick11 = TRUE, brick12 = TRUE;
 
 // Global declarations
-IDXGISwapChain					*swapchain = NULL;					// The pointer to the swap chain interface
-ID3D11Device					*dev = NULL;						// The pointer to our Direct3D device interface
-ID3D11DeviceContext				*devcon = NULL;					// The pointer to our Direct3D device context
-ID3D11RenderTargetView			*backbuffer = NULL;				// The pointer to our back buffer
-ID3D11DepthStencilView			*zbuffer = NULL;					// The pointer to our depth buffer
-ID3D11InputLayout				*pLayout = NULL;					// The pointer to the input layout
-ID3D11VertexShader				*pVS = NULL;						// The pointer to the vertex shader
-ID3D11PixelShader				*pPS = NULL;						// The pointer to the pixel shader
-ID3D11Buffer					*pVBuffer = NULL;					// The pointer to the vertex buffer
-ID3D11Buffer					*pIBuffer = NULL;					// The pointer to the index buffer
-ID3D11Buffer					*pCBuffer = NULL;					// The pointer to the constant buffer
+IDXGISwapChain					*swapchain;					// The pointer to the swap chain interface
+ID3D11Device					*dev;						// The pointer to our Direct3D device interface
+ID3D11DeviceContext				*devcon;					// The pointer to our Direct3D device context
+ID3D11RenderTargetView			*backbuffer;				// The pointer to our back buffer
+ID3D11DepthStencilView			*zbuffer;					// The pointer to our depth buffer
+ID3D11InputLayout				*pLayout;					// The pointer to the input layout
+ID3D11VertexShader				*pVS;						// The pointer to the vertex shader
+ID3D11PixelShader				*pPS;						// The pointer to the pixel shader
+ID3D11Buffer					*pVBuffer;					// The pointer to the vertex buffer
+ID3D11Buffer					*pIBuffer;					// The pointer to the index buffer
+ID3D11Buffer					*pCBuffer;					// The pointer to the constant buffer
 ID3D11ShaderResourceView		*pTexture[TexCount];		// The pointer to the texture
-LPD3DX10SPRITE					*d3dspt = NULL;					// The pointer to the Direct3D sprite interface
+LPD3DX10SPRITE					*d3dspt;					// The pointer to the Direct3D sprite interface
 
 // State objects
-ID3D11RasterizerState			*pRS = NULL;           // The default rasterizer state
-ID3D11SamplerState				*pSS = NULL;           // The default sampler state
-ID3D11BlendState				*pBS = NULL;           // A typicl blend state
+ID3D11RasterizerState			*pRS;           // The default rasterizer state
+ID3D11SamplerState				*pSS;           // The default sampler state
+ID3D11BlendState				*pBS;           // A typicl blend state
 
 // A struct to define a single vertex
 struct VERTEX 
@@ -226,19 +225,6 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				if( newGame == TRUE )
 				{
 					Lives = 3;
-					brick1 = TRUE;
-					brick2 = TRUE;
-					brick3 = TRUE;
-					brick4 = TRUE;
-					brick5 = TRUE;
-					brick6 = TRUE;
-					brick7 = TRUE;
-					brick8 = TRUE;
-					brick9 = TRUE;
-					brick10 = TRUE;
-					brick11 = TRUE;
-					brick12 = TRUE;
-					
 					gameOver = FALSE;
 
 				}
@@ -385,7 +371,7 @@ void RenderFrame( void )
 	{
 		if( colRedPlus == TRUE )
 		{
-			colRed += 0.0001f;
+			colRed += 0.0001;
 
 			if( colRed >= 1.0f )
 			{
@@ -394,7 +380,7 @@ void RenderFrame( void )
 		}
 		if ( colRedPlus == FALSE )
 		{
-			colRed -= 0.0002f;
+			colRed -= 0.0002;
 
 			if( colRed <= 0.000f )
 			{
@@ -404,7 +390,7 @@ void RenderFrame( void )
 
 		if( colGreenPlus == TRUE )
 		{
-			colGreen += 0.0002f;
+			colGreen += 0.0002;
 
 			if( colGreen >= 1.0f )
 			{
@@ -413,7 +399,7 @@ void RenderFrame( void )
 		}
 		if ( colGreenPlus == FALSE )
 		{
-			colGreen -= 0.0001f;
+			colGreen -= 0.0001;
 
 			if( colGreen <= 0.000f )
 			{
@@ -423,7 +409,7 @@ void RenderFrame( void )
 	
 		if( colBluePlus == TRUE )
 		{
-			colBlue += 0.0001f;
+			colBlue += 0.0001;
 
 			if( colBlue >= 1.0f )
 			{
@@ -432,7 +418,7 @@ void RenderFrame( void )
 		}
 		if ( colBluePlus == FALSE )
 		{
-			colBlue -= 0.0002f;
+			colBlue -= 0.0002;
 
 			if( colBlue <= 0.000f )
 			{
@@ -512,104 +498,16 @@ void RenderFrame( void )
 			
 		}
 
-		if(( ballY >= brickY[0] - 10 ) && ( ballY <= brickY[0] + 10 ))
+	// Ball hits bat
+		if(( ballY > brickY[0] - 10 ) && ( ballY < brickY[0] + 10  ))
 		{
-			if( ballX <= brickX )
+
+			if(( ballX > brickX - 25 ) && ( ballX < brickX + 25 )) //18.75f )
 			{
 				brick1 = FALSE;
 			}
 		}
 		
-		if(( ballY >= brickY[1] - 10 ) && ( ballY <= brickY[1] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick2 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[2] - 10 ) && ( ballY <= brickY[2] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick3 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[3] - 10 ) && ( ballY <= brickY[3] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick4 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[4] - 10 ) && ( ballY <= brickY[4] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick5 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[5] - 10 ) && ( ballY <= brickY[5] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick6 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[6] - 10 ) && ( ballY <= brickY[6] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick7 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[7] - 10 ) && ( ballY <= brickY[7] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick8 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[8] - 10 ) && ( ballY <= brickY[8] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick9 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[9] - 10 ) && ( ballY <= brickY[9] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick10 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[10] - 10 ) && ( ballY <= brickY[10] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick11 = FALSE;
-			}
-		}
-
-		if(( ballY >= brickY[11] - 10 ) && ( ballY <= brickY[11] + 10 ))
-		{
-			if( ballX <= brickX )
-			{
-				brick12 = FALSE;
-			}
-		}
-		
-
-
 
 		
 		// If the ball passes the bat
@@ -757,7 +655,7 @@ void RenderFrame( void )
     // Set the various states
     devcon->RSSetState( pRS );
     devcon->PSSetSamplers( 0, 1, &pSS );
-    devcon->OMSetBlendState( pBS, 0, 0xfffffff );
+    devcon->OMSetBlendState( pBS, 0, 0xffffffff );
 	
 
     // Clear the back buffer to a deep blue
